@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Headless CMS API - Documentación</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --bg: #0f172a;
+      --bg-card: #1e293b;
+      --bg-hover: #334155;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --green: #22c55e;
+      --blue: #3b82f6;
+      --yellow: #eab308;
+      --red: #ef4444;
+      --purple: #a855f7;
+      --pink: #ec4899;
+      --orange: #f97316;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      text-align: center;
+      padding: 3rem 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, var(--primary), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header p {
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    .base-url {
+      display: inline-block;
+      background: var(--bg-card);
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      margin-top: 1.5rem;
+      font-family: monospace;
+      border: 1px solid var(--border);
+    }
+
+    .section {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+    }
+
+    .section h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .endpoint {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border);
+    }
+
+    .endpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .method {
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .method.post { background: var(--green); color: #000; }
+    .method.get { background: var(--blue); color: #fff; }
+    .method.patch { background: var(--yellow); color: #000; }
+    .method.delete { background: var(--red); color: #fff; }
+
+    .lock {
+      background: var(--bg-card);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      color: var(--yellow);
+      border: 1px solid var(--border);
+    }
+
+    .path {
+      font-family: monospace;
+      color: var(--text-muted);
+    }
+
+    .description {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    .example {
+      background: #0a0f1e;
+      border-radius: 6px;
+      padding: 0.75rem;
+      font-family: monospace;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      margin-top: 0.5rem;
+    }
+
+    .example pre {
+      white-space: pre-wrap;
+      color: #a8b2d1;
+    }
+
+    .example .hl { color: var(--green); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .flow-step {
+      background: var(--bg);
+      padding: 1.5rem;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+
+    .flow-step::after {
+      content: '→';
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+
+    .flow-step:last-child::after { display: none; }
+
+    .flow-step .num {
+      width: 28px;
+      height: 28px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin: 0 auto 0.5rem;
+    }
+
+    .field-types {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .field-type {
+      background: var(--bg);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th { color: var(--text-muted); font-weight: 500; }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    .badge-new {
+      background: var(--pink);
+      color: #fff;
+      font-size: 0.65rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    nav {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 1rem 0 2rem;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    nav a:hover {
+      background: var(--bg-hover);
+      color: var(--text);
+    }
+
+    .tag-required {
+      color: var(--red);
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Headless CMS API</h1>
+      <p>API REST para gestión dinámica de contenido</p>
+      <div class="base-url">http://localhost:3000</div>
+      <nav>
+        <a href="#auth">Auth</a>
+        <a href="#content-types">Content Types</a>
+        <a href="#fields">Fields</a>
+        <a href="#entries">Entries</a>
+        <a href="#authors">Authors</a>
+        <a href="#media">Media</a>
+        <a href="#filters">Filters</a>
+      </nav>
+    </header>
+
+    <!-- ============ AUTH ============ -->
+    <section class="section" id="auth">
+      <h2><span style="color: var(--yellow);">🔐</span> Auth <span class="badge-new">NUEVO</span></h2>
+      <p style="color: var(--text-muted); margin-bottom: 1rem;">Registro, inicio de sesión y perfil de usuario</p>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="path">/api/auth/register</span>
+        </div>
+        <div class="description">Crear una cuenta nueva</div>
+        <div class="example"><pre>{
+  "username": "juanperez",        <span class="hl">// requerido</span>
+  "email": "juan@example.com",    <span class="hl">// requerido</span>
+  "password": "mi_password",      <span class="hl">// requerido</span>
+  "firstName": "Juan",
+  "lastName": "Pérez"
+}</pre></div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="path">/api/auth/login</span>
+        </div>
+        <div class="description">Iniciar sesión y obtener JWT</div>
+        <div class="example"><pre>{
+  "email": "juan@example.com",
+  "password": "mi_password"
+}</pre></div>
+        <div class="example" style="margin-top: 0.5rem;"><pre><span class="hl">Respuesta:</span>
+{
+  "success": true,
+  "data": {
+    "user": { "id": "uuid", "username": "juanperez", ... },
+    "token": "eyJhbGciOiJIUzI1Ni..."
+  }
+}</pre></div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="path">/api/auth/me</span>
+          <span class="lock">🔒 requiere token</span>
+        </div>
+        <div class="description">Obtener perfil del usuario autenticado</div>
+        <div class="example"><pre>curl -H "Authorization: Bearer &lt;token&gt;" http://localhost:3000/api/auth/me</pre></div>
+      </div>
+
+      <div style="background: var(--bg); border-radius: 8px; padding: 1rem; border: 1px solid var(--border);">
+        <p style="font-size: 0.875rem;"><strong>🔑 Usar el token:</strong> incluir en el header <code style="color: var(--green);">Authorization: Bearer &lt;token&gt;</code> en las rutas protegidas.</p>
+      </div>
+    </section>
+
+    <!-- ============ CONTENT TYPES ============ -->
+    <section class="section" id="content-types">
+      <h2><span style="color: var(--primary);">📦</span> 1. Content Types</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1rem;">Definen los modelos de contenido (posts, pages, productos, etc.)</p>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="path">/api/content-types</span>
+        </div>
+        <div class="description">Crear un content type</div>
+        <div class="example"><pre>{
+  "name": "post",             <span class="hl">// requerido, único</span>
+  "displayName": "Post",      <span class="hl">// si se omite, usa name</span>
+  "description": "Blog posts",
+  "isSingle": false
+}</pre></div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="path">/api/content-types</span>
+        </div>
+        <div class="description">Listar todos los content types</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="path">/api/content-types/:id</span>
+        </div>
+        <div class="description">Obtener un content type por ID</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method delete">DELETE</span>
+          <span class="path">/api/content-types/:id</span>
+        </div>
+        <div class="description">Eliminar (cascade: elimina fields y entries asociados)</div>
+      </div>
+    </section>
+
+    <!-- ============ FIELDS ============ -->
+    <section class="section" id="fields">
+      <h2><span style="color: var(--purple);">⚙️</span> 2. Fields</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1rem;">Definen la estructura/atributos de cada content type</p>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="path">/api/fields</span>
+        </div>
+        <div class="description">Crear un campo</div>
+        <div class="example"><pre>{
+  "contentTypeId": "uuid",         <span class="hl">// requerido</span>
+  "name": "title",                  <span class="hl">// requerido</span>
+  "displayName": "Título",
+  "fieldType": "string",            <span class="hl">// requerido</span>
+  "isRequired": true,
+  "isList": false,
+  "defaultValue": null,
+  "options": null,                  <span class="hl">// {"values":["a","b"]} para selects</span>
+  "position": 0
+}</pre></div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="path">/api/fields/content-type/:contentTypeId</span>
+        </div>
+        <div class="description">Obtener campos de un content type</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="path">/api/fields/:id</span>
+        </div>
+        <div class="description">Obtener un campo por ID</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method patch">PATCH</span>
+          <span class="path">/api/fields/:id</span>
+        </div>
+        <div class="description">Actualizar parcialmente un campo</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method delete">DELETE</span>
+          <span class="path">/api/fields/:id</span>
+        </div>
+        <div class="description">Eliminar un campo</div>
+      </div>
+
+      <h3 style="margin-top: 1.5rem; font-size: 1rem;">🧠 Tipos de campo soportados</h3>
+      <div class="field-types">
+        <span class="field-type">string</span>
+        <span class="field-type">text</span>
+        <span class="field-type">richtext</span>
+        <span class="field-type">number</span>
+        <span class="field-type">boolean</span>
+        <span class="field-type">date</span>
+        <span class="field-type">image</span>
+        <span class="field-type">relation</span>
+      </div>
+    </section>
+
+    <!-- ============ ENTRIES ============ -->
+    <section class="section" id="entries">
+      <h2><span style="color: var(--green);">📄</span> 3. Content (Entries)</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1rem;">Contenido dinámico (usar el nombre del content type como endpoint)</p>
+      <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;">
+        Las entradas se validan automáticamente contra los fields definidos en el content type.
+      </p>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="path">/api/:contentType</span>
+        </div>
+        <div class="description">Crear entrada (ej: POST /api/post)</div>
+        <div class="example"><pre>curl -X POST http://localhost:3000/api/post \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Hola mundo", "content":"Mi primer post"}'</pre></div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="path">/api/:contentType</span>
+        </div>
+        <div class="description">Listar entradas del content type</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="path">/api/:contentType/:id</span>
+        </div>
+        <div class="description">Obtener entrada por ID</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method patch">PATCH</span>
+          <span class="path">/api/:contentType/:id</span>
+        </div>
+        <div class="description">Actualizar entrada (merge parcial en JSONB)</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method delete">DELETE</span>
+          <span class="path">/api/:contentType/:id</span>
+        </div>
+        <div class="description">Eliminar entrada (soft delete)</div>
+      </div>
+    </section>
+
+    <!-- ============ AUTHORS ============ -->
+    <section class="section" id="authors">
+      <h2><span style="color: var(--orange);">✍️</span> Authors <span class="badge-new">NUEVO</span></h2>
+      <p style="color: var(--text-muted); margin-bottom: 1rem;">Gestión de autores/periodistas con asignación a entries</p>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="path">/api/authors</span>
+        </div>
+        <div class="description">Crear un autor</div>
+        <div class="example"><pre>{
+  "name": "Carlos Pérez",
+  "slug": "carlos-perez",
+  "bio": "Editor general del periódico",
+  "avatarUrl": "https://imgur.com/avatar.jpg",
+  "email": "carlos@example.com",
+  "role": "editor",              <span class="hl">// reporter | columnist | photographer | editor</span>
+  "twitter": "@carlosperez",
+  "instagram": "@carlosperez"
+}</pre></div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="path">/api/authors</span>
+        </div>
+        <div class="description">Listar todos los autores</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="path">/api/authors/:id</span>
+        </div>
+        <div class="description">Obtener autor por ID (incluye entries asociadas)</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method patch">PATCH</span>
+          <span class="path">/api/authors/:id</span>
+        </div>
+        <div class="description">Actualizar autor</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method delete">DELETE</span>
+          <span class="path">/api/authors/:id</span>
+        </div>
+        <div class="description">Eliminar autor</div>
+      </div>
+
+      <div style="margin-top: 1rem;">
+        <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">🔗 Asignar autor a una entry</h3>
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="path">/api/entry-authors</span>
+          </div>
+          <div class="description">Asigna un autor a una entrada con posición</div>
+          <div class="example"><pre>{
+  "entryId": "uuid",
+  "authorId": "uuid",
+  "position": 0    <span class="hl">// orden de firma</span>
+}</pre></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 1rem;">
+        <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">📋 Consultar entries con autores</h3>
+        <div class="example"><pre>SELECT
+  e.slug,
+  e.data->>'title' AS title,
+  jsonb_agg(jsonb_build_object('name', a.name, 'role', a.role)) AS autores
+FROM entries e
+JOIN entry_authors ea ON ea.entry_id = e.id
+JOIN authors a ON a.id = ea.author_id
+GROUP BY e.id;</pre></div>
+      </div>
+    </section>
+
+    <!-- ============ MEDIA ============ -->
+    <section class="section" id="media">
+      <h2><span style="color: var(--pink);">🎬</span> Media <span class="badge-new">NUEVO</span></h2>
+      <p style="color: var(--text-muted); margin-bottom: 1rem;">Gestión de medios externos (YouTube, imágenes en hosting externo, etc.)</p>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="path">/api/media</span>
+        </div>
+        <div class="description">Registrar un medio externo</div>
+        <div class="example"><pre>{
+  "externalUrl": "https://www.youtube.com/watch?v=abc123",
+  "provider": "youtube",       <span class="hl">// youtube | vimeo | imgur | custom</span>
+  "mediaType": "video",         <span class="hl">// video | image | audio | embed</span>
+  "title": "Video reportaje",
+  "caption": "Entrevista exclusiva",
+  "alt": "descripción para accesibilidad",
+  "credits": "Foto: Carlos Pérez",
+  "width": 1920,
+  "height": 1080
+}</pre></div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="path">/api/media</span>
+        </div>
+        <div class="description">Listar todos los medios</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="path">/api/media/:id</span>
+        </div>
+        <div class="description">Obtener medio por ID</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method patch">PATCH</span>
+          <span class="path">/api/media/:id</span>
+        </div>
+        <div class="description">Actualizar medio</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method delete">DELETE</span>
+          <span class="path">/api/media/:id</span>
+        </div>
+        <div class="description">Eliminar medio</div>
+      </div>
+
+      <div style="margin-top: 1rem;">
+        <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">🔗 Asociar medio a una entry</h3>
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="path">/api/entry-media</span>
+          </div>
+          <div class="description">Vincula un medio a una entrada</div>
+          <div class="example"><pre>{
+  "entryId": "uuid",
+  "mediaId": "uuid",
+  "usage": "featured",    <span class="hl">// featured | gallery | embed</span>
+  "position": 0
+}</pre></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FILTERS ============ -->
+    <section class="section" id="filters">
+      <h2><span style="color: var(--blue);">🔎</span> Filtros dinámicos</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1rem;">Las entries se pueden filtrar por cualquier campo del JSONB via query params</p>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="path">/api/post?title=hola</span>
+        </div>
+        <div class="description">Filtrar entradas donde title contenga "hola" (ILIKE)</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="path">/api/post?status=published</span>
+        </div>
+        <div class="description">Filtrar por estado</div>
+      </div>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="path">/api/post?status=published&author=juan</span>
+        </div>
+        <div class="description">Múltiples filtros simultáneos</div>
+      </div>
+    </section>
+
+    <!-- ============ FLUJO ============ -->
+    <section class="section">
+      <h2><span style="color: var(--yellow);">🧠</span> Flujo completo</h2>
+      <div class="flow">
+        <div class="flow-step"><div class="num">1</div>Registrar usuario</div>
+        <div class="flow-step"><div class="num">2</div>Crear content type</div>
+        <div class="flow-step"><div class="num">3</div>Crear fields</div>
+        <div class="flow-step"><div class="num">4</div>Crear entries</div>
+        <div class="flow-step"><div class="num">5</div>Asignar autores</div>
+        <div class="flow-step"><div class="num">6</div>Asociar medios</div>
+      </div>
+    </section>
+
+    <!-- ============ EJEMPLO CURL ============ -->
+    <section class="section">
+      <h2><span style="color: var(--red);">🚀</span> Ejemplo completo con curl</h2>
+
+      <div class="example" style="margin-bottom: 1rem;">
+        <strong style="color: var(--yellow);">1. Registrarse</strong>
+        <pre>curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","email":"admin@ejemplo.com","password":"123456"}'</pre>
+      </div>
+
+      <div class="example" style="margin-bottom: 1rem;">
+        <strong style="color: var(--yellow);">2. Iniciar sesión (guardar token)</strong>
+        <pre>curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@ejemplo.com","password":"123456"}'</pre>
+      </div>
+
+      <div class="example" style="margin-bottom: 1rem;">
+        <strong style="color: var(--yellow);">3. Crear content type</strong>
+        <pre>curl -X POST http://localhost:3000/api/content-types \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer TOKEN" \
+  -d '{"name":"post","displayName":"Post","description":"Artículos"}'</pre>
+      </div>
+
+      <div class="example" style="margin-bottom: 1rem;">
+        <strong style="color: var(--yellow);">4. Crear fields</strong>
+        <pre>curl -X POST http://localhost:3000/api/fields \
+  -H "Content-Type: application/json" \
+  -d '{"contentTypeId":"UUID","name":"title","displayName":"Título","fieldType":"string","isRequired":true}'</pre>
+      </div>
+
+      <div class="example" style="margin-bottom: 1rem;">
+        <strong style="color: var(--yellow);">5. Crear entrada</strong>
+        <pre>curl -X POST http://localhost:3000/api/post \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Mi artículo","content":"Texto del artículo"}'</pre>
+      </div>
+
+      <div class="example">
+        <strong style="color: var(--yellow);">6. Consultar entradas</strong>
+        <pre>curl http://localhost:3000/api/post</pre>
+      </div>
+    </section>
+
+    <footer>
+      <p>Headless CMS API — Todo se define en la base de datos</p>
+    </footer>
+  </div>
+</body>
+</html>

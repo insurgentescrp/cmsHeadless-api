@@ -2,13 +2,13 @@
 
 import * as contentService from './content.service.js'
 
-// POST /api/:contentType
 export const createEntry = async (req, res, next) => {
   try {
     const { contentType } = req.params
     const data = req.body
+    const userId = req.user?.id || null
 
-    const result = await contentService.createEntry(contentType, data)
+    const result = await contentService.createEntry(contentType, data, userId)
 
     return res.status(201).json({
       success: true,
@@ -52,13 +52,13 @@ export const getEntry = async (req, res, next) => {
   }
 }
 
-// PUT /api/:contentType/:id
 export const updateEntry = async (req, res, next) => {
   try {
     const { contentType, id } = req.params
     const data = req.body
+    const userId = req.user?.id || null
 
-    const result = await contentService.updateEntry(contentType, id, data)
+    const result = await contentService.updateEntry(contentType, id, data, userId)
 
     return res.json({
       success: true,

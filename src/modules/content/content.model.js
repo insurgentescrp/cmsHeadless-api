@@ -29,15 +29,16 @@ export const createEntry = async ({
   contentTypeId,
   data,
   slug,
-  status
+  status,
+  createdBy
 }) => {
   const { rows } = await pool.query(
     `
-    INSERT INTO entries (content_type_id, data, slug, status)
-    VALUES ($1, $2, $3, $4)
+    INSERT INTO entries (content_type_id, data, slug, status, created_by)
+    VALUES ($1, $2, $3, $4, $5)
     RETURNING *
     `,
-    [contentTypeId, data, slug, status]
+    [contentTypeId, data, slug, status, createdBy]
   )
 
   return rows[0]
@@ -88,7 +89,8 @@ export const updateEntry = async ({
   id,
   contentTypeId,
   data,
-  slug
+  slug,
+  updatedBy
 }) => {
   const { rows } = await pool.query(
     `
@@ -96,13 +98,14 @@ export const updateEntry = async ({
     SET 
       data = data || $1,
       slug = COALESCE($2, slug),
+      updated_by = COALESCE($5, updated_by),
       updated_at = NOW()
     WHERE id = $3
     AND content_type_id = $4
     AND deleted_at IS NULL
     RETURNING *
     `,
-    [data, slug, id, contentTypeId]
+    [data, slug, id, contentTypeId, updatedBy]
   )
 
   return rows[0]

@@ -1,25 +1,13 @@
-// src/modules/content/content.routes.js
-
 import { Router } from 'express'
 import * as contentController from './content.controller.js'
+import { optionalAuth } from '../../middlewares/auth.middleware.js'
 
 const router = Router()
 
-// 🔥 CRUD dinámico
-
-// Crear
-router.post('/:contentType', contentController.createEntry)
-
-// Obtener lista
+router.post('/:contentType', optionalAuth, contentController.createEntry)
 router.get('/:contentType', contentController.getEntries)
-
-// Obtener uno
 router.get('/:contentType/:id', contentController.getEntry)
-
-// Actualizar (tipo PATCH)
-router.patch('/:contentType/:id', contentController.updateEntry)
-
-// Eliminar (soft delete)
+router.patch('/:contentType/:id', optionalAuth, contentController.updateEntry)
 router.delete('/:contentType/:id', contentController.deleteEntry)
 
 export default router

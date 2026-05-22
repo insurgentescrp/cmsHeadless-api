@@ -4,36 +4,31 @@ import * as contentModel from './content.model.js'
 import { buildSchemaFromFields } from './content.validator.js'
 import { slugify } from '../../utils/slugify.js'
 
-export const createEntry = async (contentTypeName, payload) => {
-  // 1. obtener content type
+export const createEntry = async (contentTypeName, payload, userId = null) => {
   const contentType = await contentModel.getContentTypeByName(contentTypeName)
 
   if (!contentType) {
     throw new Error(`Content type '${contentTypeName}' no existe`)
   }
 
-  // 2. obtener fields
   const fields = await contentModel.getFieldsByContentType(contentType.id)
 
-  // 3. construir schema dinámico
   const schema = buildSchemaFromFields(fields)
 
-  // 4. validar con Zod
   const validatedData = schema.parse(payload)
 
-  // 5. generar slug (si existe title)
   let slug = null
 
   if (validatedData.title) {
     slug = slugify(validatedData.title)
   }
 
-  // 6. insertar en DB
   const entry = await contentModel.createEntry({
     contentTypeId: contentType.id,
     data: validatedData,
     slug,
-    status: validatedData.status || 'draft'
+    status: validatedData.status || 'draft',
+    createdBy: userId
   })
 
   return entry
@@ -78,7 +73,7 @@ export const getEntry = async (contentTypeName, id) => {
   }
 }
 
-export const updateEntry = async (contentTypeName, id, payload) => {
+export const updateEntry = async (contentTypeName, id, payload, userId = null) => {
   const contentType = await contentModel.getContentTypeByName(contentTypeName)
 
   if (!contentType) {
@@ -100,7 +95,8 @@ export const updateEntry = async (contentTypeName, id, payload) => {
     id,
     contentTypeId: contentType.id,
     data: validatedData,
-    slug
+    slug,
+    updatedBy: userId
   })
 
   return updated
