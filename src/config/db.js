@@ -4,11 +4,11 @@ import pkg from 'pg'
 const { Pool } = pkg
 
 export const DBconnect = {
-  user: 'headless',
-  password: 'headless',
+  user: 'cms',
+  password: 'mi4v-aee3-5939',
   host: 'localhost',
   port: 5432,
-  database: 'headless'
+  database: 'cms'
 }
 
 // Pool de conexiones
