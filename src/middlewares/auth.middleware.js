@@ -5,15 +5,14 @@ const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret_change_in_production'
 
 export const authenticate = async (req, res, next) => {
   try {
-    const header = req.headers.authorization
+    const token = req.cookies?.token || req.headers.authorization?.startsWith('Bearer ') && req.headers.authorization.split(' ')[1]
 
-    if (!header || !header.startsWith('Bearer ')) {
+    if (!token) {
       const err = new Error('Token no proporcionado')
       err.status = 401
       throw err
     }
 
-    const token = header.split(' ')[1]
     const decoded = jwt.verify(token, JWT_SECRET)
     const user = await findUserById(decoded.id)
 
@@ -36,13 +35,10 @@ export const authenticate = async (req, res, next) => {
 
 export const optionalAuth = async (req, res, next) => {
   try {
-    const header = req.headers.authorization
+    const token = req.cookies?.token || req.headers.authorization?.startsWith('Bearer ') && req.headers.authorization.split(' ')[1]
 
-    if (!header || !header.startsWith('Bearer ')) {
-      return next()
-    }
+    if (!token) return next()
 
-    const token = header.split(' ')[1]
     const decoded = jwt.verify(token, JWT_SECRET)
     const user = await findUserById(decoded.id)
 

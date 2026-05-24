@@ -1,6 +1,7 @@
 import express from 'express'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import cookieParser from 'cookie-parser'
 import contentRoutes from './modules/content/content.routes.js'
 import { errorHandler } from './middlewares/error.middleware.js'
 import contentTypeRoutes from './modules/contentType/contentType.routes.js'
@@ -15,6 +16,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 
 app.use(express.json())
+app.use(cookieParser())
 app.use(express.static(path.join(__dirname, '..', 'public')))
 
 app.use('/api/auth', authRoutes)

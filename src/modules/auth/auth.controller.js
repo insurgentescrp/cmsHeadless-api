@@ -4,9 +4,16 @@ export const register = async (req, res, next) => {
   try {
     const result = await authService.register(req.body)
 
+    res.cookie('token', result.token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    })
+
     res.status(201).json({
       success: true,
-      data: result
+      data: { user: result.user }
     })
   } catch (err) {
     next(err)
@@ -15,12 +22,28 @@ export const register = async (req, res, next) => {
 
 export const login = async (req, res, next) => {
   try {
-    const result = await authService.login(req.body)
+    const { token, user } = await authService.login(req.body)
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    })
 
     res.json({
       success: true,
-      data: result
+      data: { user }
     })
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const logout = async (req, res, next) => {
+  try {
+    res.clearCookie('token', { httpOnly: true, sameSite: 'lax' })
+    res.json({ success: true, data: { message: 'Sesión cerrada' } })
   } catch (err) {
     next(err)
   }
