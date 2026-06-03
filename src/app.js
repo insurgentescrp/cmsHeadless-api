@@ -2,6 +2,7 @@ import express from 'express'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 import contentRoutes from './modules/content/content.routes.js'
 import { errorHandler } from './middlewares/error.middleware.js'
 import contentTypeRoutes from './modules/contentType/contentType.routes.js'
@@ -18,6 +19,11 @@ const app = express()
 app.use(express.json())
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, '..', 'public')))
+
+app.use(cors({
+  origin: ['https://cms-headless-admin.vercel.app', 'https://insurgentesnews.vercel.app', 'https://www.insurgentescrp.com', 'https://insurgentescrp.com', 'http://localhost:3000'],
+  credentials: true
+}))
 
 app.use('/api/auth', authRoutes)
 app.use('/api/content-types', contentTypeRoutes)
