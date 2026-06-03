@@ -21,7 +21,7 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, '..', 'public')))
 
 app.use(cors({
-  origin: ['https://cms-headless-admin.vercel.app', 'https://insurgentesnews.vercel.app', 'https://www.insurgentescrp.com', 'https://insurgentescrp.com', 'http://localhost:3000'],
+  origin: ['https://cms-headless-admin.vercel.app', 'https://insurgentesnews.vercel.app', 'https://www.insurgentescrp.com', 'https://insurgentescrp.com', 'https://insurgentes-news.vercel.app/' 'http://localhost:3000'],
   credentials: true
 }))
 
