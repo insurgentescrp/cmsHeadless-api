@@ -26,8 +26,8 @@ export const login = async (req, res, next) => {
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000
     })
 
@@ -42,7 +42,7 @@ export const login = async (req, res, next) => {
 
 export const logout = async (req, res, next) => {
   try {
-    res.clearCookie('token', { httpOnly: true, sameSite: 'lax' })
+    res.clearCookie('token', { httpOnly: true, secure: true, sameSite: 'none' })
     res.json({ success: true, data: { message: 'Sesión cerrada' } })
   } catch (err) {
     next(err)
